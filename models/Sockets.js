@@ -14,7 +14,7 @@ class Sockets {
     }
 
     socketEvents() {
-    
+
         this.io.on('connection', async (socket) => {
 
             const [valido, uid] = comprobarJWT(socket.handshake.query['x-token']);
@@ -26,22 +26,22 @@ class Sockets {
 
             await usuarioConectado(uid);
 
-           
+
             socket.join(uid);
 
-           
+
             this.io.emit('lista-usuarios', await getUsuarios())
 
-            socket.on('mensaje-personal', async (payload) => {a
+            socket.on('mensaje-personal', async (payload) => {
 
                 const mensaje = await grabarMensaje(payload);
-    
+
                 this.io.to(payload.para).emit('mensaje-personal', mensaje);
                 this.io.to(payload.de).emit('mensaje-personal', mensaje);
             });
 
 
-         
+
             socket.on('disconnect', async () => {
                 await usuarioDesconectado(uid);
                 this.io.emit('lista-usuarios', await getUsuarios())
